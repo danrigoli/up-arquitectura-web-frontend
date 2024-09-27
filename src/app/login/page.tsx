@@ -95,7 +95,7 @@ const [loading, setLoading] = useState(false)
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Link href="#" className="text-sm text-slate-800 hover:text-slate-700 hover:underline transition-all">Forgot password?</Link>
+          <Link href="#" className="text-sm text-neutral-800 hover:text-neutral-700 hover:underline transition-all">Forgot password?</Link>
         </CardFooter>
       </Card>
     </div>
