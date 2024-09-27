@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -51,6 +52,9 @@ const config: Config = {
   				'5': 'hsl(var(--chart-5))'
   			}
   		},
+			maxWidth: {
+				'8xl': '1440px',
+			},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
