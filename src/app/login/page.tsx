@@ -16,8 +16,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Link from 'next/link'
 import { useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
-import { signIn } from 'next-auth/react'
-import { toast } from '@/hooks/use-toast'
+import { useToast } from '@/hooks/use-toast'
+import apiService from '@/services/api.service'
+import authService from '@/services/auth.service'
+import { saveAuthCookies } from '@/lib/cookies'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
   email: z.string().email({
@@ -30,6 +33,9 @@ const formSchema = z.object({
 
 export default function LoginScreen() {
 const [loading, setLoading] = useState(false)
+const { toast } = useToast()
+const router = useRouter()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,16 +46,24 @@ const [loading, setLoading] = useState(false)
     mode: "onBlur",
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    signIn("credentials", values).then(() => {
-      setLoading(false)
-    }).catch((error) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true)
+    const { data: loginData, ok } = await authService.login(values.email, values.password)
+    if (!loginData || !ok) {
       toast({
-        title: 'Error',
-        description: error.message,
+        title: "Error",
+        description: "Invalid email or password.",
+      })
+      form.setError('password', {
+        type: 'manual',
+        message: 'Invalid email or password.'
       })
       setLoading(false)
-    })
+      return
+    }
+    saveAuthCookies(loginData)
+    apiService.authToken = loginData.accessToken
+    router.push('/dashboard')
   }
 
   return (

@@ -14,8 +14,12 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import ModeToggle from './mode-toggle'
+import { useAuthContext } from '@/contexts/auth.context'
+import { redirect } from 'next/navigation'
 
 export function Navbar() {
+
+  const { logout } = useAuthContext()
   return (
     <header className="sticky top-0 z-50 w-full  border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
       <div className="container flex h-14 items-center justify-end max-w-8xl mx-auto px-6 xl:px-14 2xl:px-0">
@@ -76,10 +80,19 @@ export function Navbar() {
             </div>
           </SheetContent>
         </Sheet>
-        <div className="hidden flex-1 items-center justify-end space-x-2 md:flex">
+        <div className="hidden flex-1 items-center justify-end space-x-4 md:flex">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <ModeToggle />
           </div>
+          <Button
+            variant='link'
+            onClick={() => {
+              logout()
+              redirect('/login');
+            }}
+            className="hover:underline">
+            Cerrar sesion
+          </Button>
         </div>
       </div>
     </header>
