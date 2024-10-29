@@ -79,7 +79,7 @@ export const config = {
 const refreshSession = async (refreshToken: string, email: string) => {
   try {
     const response = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + '/auth/refresh-session',
+      process.env.NEXT_PUBLIC_API_URL + '/auth/refresh',
       {
         method: 'POST',
         headers: {
@@ -106,7 +106,7 @@ const refreshSession = async (refreshToken: string, email: string) => {
 const updateUser = async (token: string) => {
   if (!token) return;
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/me', {
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/profile', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -16,6 +16,7 @@ import { Menu } from "lucide-react"
 import ModeToggle from './mode-toggle'
 import { useAuthContext } from '@/contexts/auth.context'
 import { redirect } from 'next/navigation'
+import Image from 'next/image'
 
 export function Navbar() {
 
@@ -25,29 +26,28 @@ export function Navbar() {
       <div className="container flex h-14 items-center justify-end max-w-8xl mx-auto px-6 xl:px-14 2xl:px-0">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="hidden font-bold sm:inline-block">ACME Inc</span>
+            <Image src="/images/logo.png" alt="ACME Inc" width={60} height={60} />
           </Link>
           <NavigationMenu>
             <NavigationMenuList>
             <NavigationMenuItem>
-                <Link href="/dashboard" passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                <Link href="/dashboard" className={navigationMenuTriggerStyle()}>
                     Dashboard
-                  </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/payments" passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                <Link href="/payments" className={navigationMenuTriggerStyle()}>
                     Pagos
-                  </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/businesses" passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Empresas
-                  </NavigationMenuLink>
+                <Link href="/categories" className={navigationMenuTriggerStyle()}>
+                  Categorías
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/companies" className={navigationMenuTriggerStyle()}>
+                  Compañía
                 </Link>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -69,10 +69,13 @@ export function Navbar() {
                 <Link href="/dashboard" className="hover:underline">
                   Dashboard
                 </Link>
-                <Link href="/pagos" className="hover:underline">
+                <Link href="/payments" className="hover:underline">
                   Pagos
                 </Link>
-                <Link href="/empresas" className="hover:underline">
+                <Link href="/categories" className="hover:underline">
+                  Categorías
+                </Link>
+                <Link href="/companies" className="hover:underline">
                   Empresas
                 </Link>
                 <ModeToggle />
