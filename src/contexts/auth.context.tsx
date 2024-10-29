@@ -26,10 +26,10 @@ export const AuthContext = React.createContext<IAuthContext>(
 export default function AuthProvider({
   user: loadedUser,
   children,
-}: {
+}: Readonly<{
   user: User | null;
   children: React.ReactNode;
-}) {
+}>) {
   const [isLoggedIn, setIsLoggedIn] = useState(!!loadedUser);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(loadedUser);
@@ -82,7 +82,7 @@ export default function AuthProvider({
       const exp = decodeTokenExpiration(token);
       // if it's expiring in 5 minutes, refresh it
       const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-      const timeUntilExpiration = (exp || 0) - currentTime;
+      const timeUntilExpiration = (exp ?? 0) - currentTime;
       if (timeUntilExpiration < 60 * 5) {
         token = undefined;
       }
@@ -101,7 +101,7 @@ export default function AuthProvider({
 
   async function generateToken(email: string, refreshToken: string) {
     const { data: refreshedSessionData, error: refreshSessionError } =
-      await apiService.post<LoginResponse>('auth/refresh-session', {
+      await apiService.post<LoginResponse>('auth/refresh', {
         email,
         refreshToken,
       });
@@ -158,8 +158,8 @@ export default function AuthProvider({
         setUser,
         isLoggedIn,
         loading,
-        refreshUser: () => initializeUser(),
-        logout,
+        refreshUser: () => { (async () => await initializeUser())(); },
+        logout: () => { logout(); },
       }}
     >
       {children}

@@ -18,7 +18,7 @@ export default async function initializeUser() {
 
   if (token && !user) {
     apiService.authToken = token;
-    const { error, data } = await apiService.get<User>('auth/me');
+    const { error, data } = await apiService.get<User>('auth/profile');
     if (error) {
       apiService.authToken = '';
       return;
@@ -31,7 +31,7 @@ export default async function initializeUser() {
 
 async function generateToken(email: string, refreshToken: string) {
   const { data: refreshedSessionData, error: refreshSessionError } =
-    await apiService.post<LoginResponse>('auth/refresh-session', {
+    await apiService.post<LoginResponse>('auth/refresh', {
       email,
       refreshToken,
     });
