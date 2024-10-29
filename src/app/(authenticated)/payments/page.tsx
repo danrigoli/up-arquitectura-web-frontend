@@ -1,26 +1,18 @@
-"use client"
-
 import * as React from "react"
-import { Payment } from '@/types/payment'
 import PaymentsTable from './components/table'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import loadServerSideCookies from '@/lib/loadServerSideCookies'
+import paymentService from '@/services/payments.service'
 
-export default function Payments() {
+export default async function Payments() {
 
-  const paymentGenerator = (quantity: number) => {
-    const payments: Payment[] = []
-    for (let i = 0; i < quantity; i++) {
-      payments.push({
-        id: `id-${i}`,
-        amount: Math.floor(Math.random() * 1000),
-        status: ["pending", "processing", "success", "failed"][Math.floor(Math.random() * 4)] as Payment["status"],
-        email: `carmella@hotmail.com`,
-        createdAt: new Date(),
-      })
-    }
-    return payments
-  }
+  loadServerSideCookies();
+  const { data: payments } = await paymentService.getPayments({
+    limit: 10,
+    offset: 0,
+  });
+  const { data: count } = await paymentService.getPaymentsCount()
 
   return (
     <>
@@ -34,7 +26,7 @@ export default function Payments() {
         </Button>
       </Link>
     </div>
-      <PaymentsTable payments={paymentGenerator(10)} total={100} />
+      <PaymentsTable payments={payments ?? []} total={count?.count ?? 0} />
     </>
   )
 }

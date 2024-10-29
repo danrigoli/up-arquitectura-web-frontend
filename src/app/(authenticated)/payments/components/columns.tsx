@@ -1,8 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Payment } from '@/types/payment'
-import { CaretDownIcon, CaretUpIcon, DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { CaretDownIcon, CaretUpIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
 
 export const columns: ColumnDef<Payment>[] = [
@@ -23,20 +22,38 @@ export const columns: ColumnDef<Payment>[] = [
       )
     },
     cell: ({ row }) => (
-      <div className="text-sm font-medium text-primary-600 ml-2">
+      <div className="text-sm font-medium text-primary-600 px-4">
         {row.getValue("id")}
       </div>
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: "company",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          Company
+          <div className='ml-2 h-4 w-4'>
+            {column.getIsSorted() === "asc" && <CaretUpIcon className="w-full" />}
+            {column.getIsSorted() === "desc" && <CaretDownIcon className="w-full" />}
+          </div>
+        </Button>
+      )
+    },    
+    cell: ({ row }) => <div className='px-4'>{row.original.company.name}</div>
+  },
+  {
+    accessorKey: "category",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Category
           <div className='ml-2 h-4 w-4'>
             {column.getIsSorted() === "asc" && <CaretUpIcon className="w-full" />}
             {column.getIsSorted() === "desc" && <CaretDownIcon className="w-full" />}
@@ -45,20 +62,20 @@ export const columns: ColumnDef<Payment>[] = [
       )
     },    
     cell: ({ row }) => (
-      <Badge variant='default' className='capitalize hover:bg-primary'>
-        {row.getValue("status")}
+      <Badge variant='default' className='capitalize hover:bg-primary mx-4'>
+        {row.original.category.name}
       </Badge>
     ),
   },
   {
-    accessorKey: "email",
+    accessorKey: "description",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Description
           <div className='ml-2 h-4 w-4'>
             {column.getIsSorted() === "asc" && <CaretUpIcon className="w-full" />}
             {column.getIsSorted() === "desc" && <CaretDownIcon className="w-full" />}
@@ -66,7 +83,7 @@ export const columns: ColumnDef<Payment>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className='px-4'>{row.original.description}</div>,
   },
   {
     accessorKey: "amount",
@@ -93,7 +110,7 @@ export const columns: ColumnDef<Payment>[] = [
         currency: "USD",
       }).format(amount)
 
-      return <div className="font-medium">{formatted}</div>
+      return <div className="font-medium px-4">{formatted}</div>
     },
   },
   {
@@ -118,49 +135,9 @@ export const columns: ColumnDef<Payment>[] = [
       const date = new Date(row.getValue("date"))
 
       return (
-        <div className="text-sm text-muted-foreground text-right">
+        <div className="text-sm text-muted-foreground text-right px-4">
           {date.toLocaleDateString()}
         </div>
-      )
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className='text-right mr-2'>
-              <Button variant="ghost" className="h-8 w-8 p-0 text-right">
-                <span className="sr-only">Open menu</span>
-                <DotsHorizontalIcon className="h-4 w-4" />
-              </Button>
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>
-              Acciones
-            </DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copiar ID de pago
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Ver detalles
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              Editar el pago
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Eliminar el pago
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       )
     },
   },
