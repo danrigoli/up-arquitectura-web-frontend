@@ -53,6 +53,7 @@ const router = useRouter()
       toast({
         title: "Error",
         description: "Invalid email or password.",
+        variant: "destructive",
       })
       form.setError('password', {
         type: 'manual',

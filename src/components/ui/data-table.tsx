@@ -30,6 +30,7 @@ interface DataTableProps<TData, TValue> {
   filterPlaceholder?: string
   onPaginationChange: (pageIndex: number, pageSize: number) => void
   onFilterChange: (columnId: string, value: string) => void
+  onSortingChange?: (sorting: SortingState) => void
   isLoading?: boolean
 }
 
@@ -41,6 +42,7 @@ export function DataTable<TData, TValue>({
   filterPlaceholder = "Filter...",
   onPaginationChange,
   onFilterChange,
+  onSortingChange = () => {},
   isLoading = false,
 }: Readonly<DataTableProps<TData, TValue>>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -49,6 +51,8 @@ export function DataTable<TData, TValue>({
     pageIndex: 0,
     pageSize: 10,
   })
+  const [searchbar, setSearchbar] = React.useState('')
+  const searchbarTimeout = React.useRef<NodeJS.Timeout>()
 
   const pagination = React.useMemo(
     () => ({
@@ -88,19 +92,25 @@ export function DataTable<TData, TValue>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columnFilters, filterColumn, table])
 
-  const LoadingSkeleton = () => (
-    <>
-      {[...Array(pageSize)].map((_, index) => (
+  React.useEffect(() => {
+    if (table.getState().sorting.length) {
+      onSortingChange(table.getState().sorting)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [table.getState().sorting])
+
+  const LoadingSkeleton = () => {
+    return [...Array(pageSize)].map((_, index) => (
         <TableRow key={index}>
-          {columns.map((column) => (
-            <TableCell key={column.id}>
+          {columns.map((column, index) => (
+            <TableCell key={'column' + index}>
               <Skeleton className="h-6 w-full" />
             </TableCell>
           ))}
         </TableRow>
-      ))}
-    </>
-  )
+      ))
+  }
+
 
   return (
     <div className="w-full">
@@ -108,10 +118,18 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center py-4">
           <Input
             placeholder={filterPlaceholder}
-            value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn(filterColumn)?.setFilterValue(event.target.value)
-            }
+            value={searchbar}
+            onChange={(event) => {
+              const value = event.target.value;
+              setSearchbar(value);
+              const column = table.getColumn(filterColumn);
+              if (column !== undefined) {
+                clearTimeout(searchbarTimeout.current);
+                searchbarTimeout.current = setTimeout(() => {
+                  table.getColumn(filterColumn)?.setFilterValue(value);
+                }, 300);
+              }
+            }}
             className="max-w-sm"
           />
         </div>
