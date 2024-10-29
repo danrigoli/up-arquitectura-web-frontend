@@ -1,7 +1,22 @@
+import { Category } from './category';
+import { Company } from './company';
+
 export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-  createdAt: Date
+  id: number;
+  amount: number;
+  date: Date;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  category: Category;
+  company: Company;
+}
+
+export type UpdatePayment = {
+  id: number;
+  amount: number;
+  date: Date;
+  description: string;
+  categoryId: number;
+  companyId: number;
 }
